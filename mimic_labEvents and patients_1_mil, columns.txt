@@ -1,0 +1,2 @@
+labevents.subject_id, labevents.itemid, labevents.charttime, labevents.value, labevents.valuenum, labevents.valueuom,labevents.flag,
+patients.subject_id, patients.gender, patients.dob, patients.dod, patients.expire_flag
