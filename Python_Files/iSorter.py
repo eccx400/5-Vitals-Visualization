@@ -14,7 +14,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 __author__ = "Eric Cheng"
 
-f = open(r"C:\Users\datiphy\Documents\NEO Excel\Charts\icd_subjects.txt", "r")
+f = open(r"C:\Users\datiphy\Documents\NEO Excel\Charts\subjects.txt", "r")
 
 newpath = "C:\\Users\\datiphy\\Documents\\NEO Excel\\icd_files\\"
 txtlines = f.readlines()
@@ -33,65 +33,115 @@ for line in txtlines:
         writer = pd.ExcelWriter(newpath + subject_id + '.xlsx', engine='xlsxwriter')
         workbook = writer.book
 
+        #Converts Celcius to Fahrenheit
+        def f(x):
+                x = x * 1.8 + 32
+                return float(x)
+
+        #Calculates 5 Vitals
+        def vitals(item_1, item_2, vital_name):
+                dataframe = df[(df['ITEMID'] == item_1) | (df['ITEMID'] == item_2)]
+                dataframe['CHARTTIME'] = pd.to_datetime(dataframe['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
+                dataframes = dataframe[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
+                dataframes.rename(columns= {'VALUENUM' : vital_name}, inplace=True)   
+                return dataframes
+
+        #Calculates Alarm values
+        def alarms(dataframe, alarm_1, alarm_2, vital_name, alarm_name):
+                if(alarm_1 == None):
+                        alarm = dataframe[(dataframe[vital_name] <= alarm_2)]
+                        alarm.rename(columns= {vital_name : alarm_name}, inplace=True)
+                elif(alarm_2 == None):
+                        alarm = dataframe[(dataframe[vital_name] >= alarm_1)]
+                        alarm.rename(columns= {vital_name : alarm_name}, inplace=True)
+                else:
+                        alarm = dataframe[(dataframe[vital_name] >= alarm_1) | (dataframe[vital_name] <= alarm_2)]
+                        alarm.rename(columns= {vital_name : alarm_name}, inplace=True)
+                return alarm
+
+        #Calculates GCS Vitals
+        def gcs_vitals(item_1, vital_name):
+                dataframe = df[(df['ITEMID'] == item_1)]
+                dataframes = dataframe[["CHARTTIME", "VALUE"]].sort_values(by="CHARTTIME")
+                dataframes.CHARTTIME = pd.to_datetime(dataframe.CHARTTIME)
+                dataframes.rename(columns= {'VALUE' : vital_name}, inplace=True)
+                return dataframes
+
         #Heart Rate
-        HR = df[(df['ITEMID'] == 220045) | (df['ITEMID'] == 211)]
-        HR['CHARTTIME'] = pd.to_datetime(HR['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
-        HRS = HR[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
-        HRS.rename(columns= {'VALUENUM' : 'Heart Rate'}, inplace=True)
+        HRS = vitals(220045, 211, 'Heart Rate')
+
+        #Heart Rate Alarm
+        HR_alarm = alarms(HRS, 140, 30, 'Heart Rate', 'HR Alarm')
 
         #Systolic Blood Pressure
-        BPS = df[(df['ITEMID'] == 220179) | (df['ITEMID'] == 455)]
-        BPS['CHARTTIME'] = pd.to_datetime(BPS['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
-        BPSS = BPS[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
-        BPSS.rename(columns= {'VALUENUM' : 'Systolic BP'}, inplace=True)
+        BPSS = vitals(220179, 455, 'Systolic BP')
 
-        #Diatolic Blood Pressure
-        BPD = df[(df['ITEMID'] == 220180) | (df['ITEMID'] == 8441)]
-        BPD['CHARTTIME'] = pd.to_datetime(BPD['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
-        BPDS = BPD[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
-        BPDS.rename(columns= {'VALUENUM' : 'Diatolic BP'}, inplace=True)
+        #Blood Pressure Alarm
+        BPS_alarm = alarms(BPSS, None, 80, 'Systolic BP', 'BP Alarm')
+
+        #Diastolic Blood Pressure
+        BPDS = vitals(220180, 8441, 'Diastolic BP')
 
         #Blood Pressure Totals
-        BPT = pd.merge(BPDS, BPSS, on='CHARTTIME', how='outer')
+        BPT = pd.merge(BPSS, BPDS, on='CHARTTIME', how='left')
 
         #Respiratory Rate
-        RR = df[(df['ITEMID'] == 220210) | (df['ITEMID'] == 618)]
-        RR['CHARTTIME'] = pd.to_datetime(RR['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
-        RRS = RR[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
-        RRS.rename(columns= {'VALUENUM' : 'Respiratory Rate'}, inplace=True)
+        RRS = vitals(220210, 618, "Respiratory Rate")
+
+        #Respiratory Rate Alarm
+        RR_alarm = alarms(RRS, 37, 4, 'Respiratory Rate', 'RR Alarm')
 
         #O2 Saturation
-        O2 = df[(df['ITEMID'] == 220277) | (df['ITEMID'] == 646)]
-        O2['CHARTTIME'] = pd.to_datetime(O2['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
-        O2S = O2[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
-        O2S.rename(columns= {'VALUENUM' : 'O2 Saturation'}, inplace=True)
+        O2S = vitals(220277, 646, 'O2 Saturation')
 
         #Temperature
-        TP = df[(df['ITEMID'] == 223761) | (df['ITEMID'] == 678 )]
+        TPF = df[(df['ITEMID'] == 223761) | (df['ITEMID'] == 678 )]
+        TPC = df[(df['ITEMID'] == 223762) | (df['ITEMID'] == 676 )]
+        TPC['ITEMID'] = TPC['ITEMID'].apply(f)
+        TP = pd.concat([TPF, TPC])
         TP['CHARTTIME'] = pd.to_datetime(TP['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
         TPS = TP[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
         TPS.rename(columns= {'VALUENUM' : 'Temperature'}, inplace=True)
 
         #GCS_Verbal
-        GCS_Verbal = df[(df['ITEMID'] == 223900)]
-        GCS_Verbals = GCS_Verbal[["CHARTTIME", "VALUE"]].sort_values(by="CHARTTIME")
-        GCS_Verbals.CHARTTIME = pd.to_datetime(GCS_Verbals.CHARTTIME).dt.strftime('%m-%d, %H:%M')
-        GCS_Verbals.rename(columns= {'VALUE' : 'GCS: Verbal'}, inplace=True)
-        print(GCS_Verbals)
+        GCS_Verbals = gcs_vitals(223900, 'GCS: Verbal')
 
         #GCS_Motor
-        GCS_Motor = df[(df['ITEMID'] == 223901)]
-        GCS_Motors = GCS_Motor[["CHARTTIME", "VALUE"]].sort_values(by="CHARTTIME")
-        GCS_Motors.CHARTTIME = pd.to_datetime(GCS_Motors.CHARTTIME).dt.strftime('%m-%d, %H:%M')
-        GCS_Motors.rename(columns= {'VALUE' : 'GCS: Motor'}, inplace=True)
-        print(GCS_Motors)
+        GCS_Motors = gcs_vitals(223901, 'GCS: Motor')
 
         #GCS_Total
-        GCS_Total = df[(df['ITEMID'] == 198)]
-        GCS_Totals = GCS_Total[["CHARTTIME", "VALUE"]].sort_values(by="CHARTTIME")
-        GCS_Totals.CHARTTIME = pd.to_datetime(GCS_Totals.CHARTTIME).dt.strftime('%m-%d, %H:%M')
-        GCS_Totals.rename(columns= {'VALUE' : 'GCS: Total'}, inplace=True)
-        print(GCS_Totals)
+        GCS_Totals = gcs_vitals(198, 'GCS: Total')
+
+        try:
+                #Gets the top 3 most common prescriptions
+                n = 3
+                lister = af["GSN"].value_counts().nlargest(3).index.tolist()
+
+                sodium = af[(af['GSN'] == lister[0]) & (af['GSN'].notnull())]
+                sodiums = sodium[["STARTDATE", "DOSE_VAL_RX", "FORM_UNIT_DISP"]].sort_values(by="STARTDATE")
+                s_header = sodium["DRUG"].values[0]
+                sodiums["DOSE_VAL_RX"] = sodiums["DOSE_VAL_RX"] +" "+ sodiums["FORM_UNIT_DISP"]
+                sodiums.STARTDATE = pd.to_datetime(sodiums.STARTDATE)
+                sodiums = sodiums.drop(columns=["FORM_UNIT_DISP"])
+                sodiums.rename(columns= {'STARTDATE': 'CHARTTIME', 'DOSE_VAL_RX' : s_header}, inplace=True)
+
+                fur = af[(af['GSN'] == lister[1]) & (af['GSN'].notnull())]
+                furs = fur[["STARTDATE", "DOSE_VAL_RX", "FORM_UNIT_DISP"]].sort_values(by="STARTDATE")
+                f_header = fur["DRUG"].values[0]
+                furs["DOSE_VAL_RX"] = furs["DOSE_VAL_RX"] +" "+ furs["FORM_UNIT_DISP"]
+                furs.STARTDATE = pd.to_datetime(furs.STARTDATE)
+                furs = furs.drop(columns=["FORM_UNIT_DISP"])
+                furs.rename(columns= {'STARTDATE': 'CHARTTIME', 'DOSE_VAL_RX' : f_header}, inplace=True)
+
+                pro = af[(af['GSN'] == lister[2]) & (af['GSN'].notnull())]
+                pros = pro[["STARTDATE", "DOSE_VAL_RX", "FORM_UNIT_DISP"]].sort_values(by="STARTDATE")
+                p_header = pro["DRUG"].values[0]
+                pros["DOSE_VAL_RX"] = pros["DOSE_VAL_RX"] +" "+ pros["FORM_UNIT_DISP"]
+                pros.STARTDATE = pd.to_datetime(pros.STARTDATE)
+                pros = pros.drop(columns=["FORM_UNIT_DISP"])
+                pros.rename(columns= {'STARTDATE': 'CHARTTIME', 'DOSE_VAL_RX' : p_header}, inplace=True)
+        except:
+                continue
 
         #Complete Vitals Chart
         total_Vitals = pd.merge(HRS, BPSS, how='left', on=['CHARTTIME'])
@@ -99,71 +149,121 @@ for line in txtlines:
         total_Vitals3 = pd.merge(total_Vitals2, RRS, how='left', on=['CHARTTIME'])
         total_Vitals4 = pd.merge(total_Vitals3, O2S, how='left', on=['CHARTTIME'])
         total_Vitals5 = pd.merge(total_Vitals4, TPS, how='left', on=['CHARTTIME'])
+        total_Vitals6 = pd.merge(total_Vitals5, HR_alarm, how='left', on=['CHARTTIME'])
+        total_Vitals7 = pd.merge(total_Vitals6, BPS_alarm, how='left', on=['CHARTTIME'])
+        total_Vitals8 = pd.merge(total_Vitals7, RR_alarm, how='left', on=['CHARTTIME'])
+        total_Vitals8.to_excel( writer, sheet_name='Visualization')
+
         GCS_Vitals = pd.merge(GCS_Verbals, GCS_Motors, how='outer', on=['CHARTTIME'])
         GCS_Vitals2 = pd.merge(GCS_Vitals, GCS_Totals, how='outer', on=['CHARTTIME'])
-        GCS_Vitals2 = GCS_Vitals2[['CHARTTIME', 'GCS: Verbal', 'GCS: Motor', 'GCS: Total']]
-        total_Vitals5.to_excel( writer, sheet_name='Visualization')
+        GCS_Vitals3 = pd.merge(GCS_Vitals2, sodiums, how='outer', on=['CHARTTIME'])
+        GCS_Vitals4 = pd.merge(GCS_Vitals3, furs, how='outer', on=['CHARTTIME'])
+        GCS_Vitals5 = pd.merge(GCS_Vitals4, pros, how='outer', on=['CHARTTIME'])
+        GCS_Vitals5 = GCS_Vitals5.sort_values(by="CHARTTIME")
+        GCS_Vitals5['CHARTDATE'] = GCS_Vitals5['CHARTTIME']
+        GCS_Vitals5.CHARTDATE = pd.to_datetime(GCS_Vitals5.CHARTTIME).dt.strftime('%m-%d')
+        GCS_Vitals5.CHARTTIME = pd.to_datetime(GCS_Vitals5.CHARTTIME).dt.strftime('%H:%M')
+        cols_to_move = ['CHARTDATE', 'CHARTTIME', 'GCS: Verbal', 'GCS: Motor', 'GCS: Total']
+        GCS_Vitals5 =  GCS_Vitals5[ cols_to_move + [ col for col in  GCS_Vitals5.columns if col not in cols_to_move ] ]
 
         # Create a chart object.
         chart = workbook.add_chart({"type": "line"})
 
         # Configure the series of the chart from the dataframe data.
         # [sheetname, first_row, first_col, last_row, last_col]
-        row = len(total_Vitals5.index)
+        row = len(total_Vitals8.index)
+        
+        #HR
         chart.add_series({
                 'name':       [ "Visualization", 0, 2],
                 'categories': [ "Visualization", 1, 1, row, 1],
                 'values':     [ "Visualization", 1, 2, row, 2],
-                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': 'black'}, 'border': {'color': 'black'} },
-                'line':       { 'width': 1, 'color': 'black'}
+                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#f15854'}, 'border': {'color': 'black'} },
+                'line':       { 'width': 1, 'color': '#f15854'}
                 })
 
+        #BPS
         chart.add_series({
                 'name':       [ "Visualization", 0, 3],
                 'categories': [ "Visualization", 1, 1, row, 1],
                 'values':     [ "Visualization", 1, 3, row, 3],
-                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': 'red'}, 'border': {'color': 'black'}},
-                'line':       { 'width': 1, 'color': 'red'}
+                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#faa43a'}, 'border': {'color': 'black'}},
+                'line':       { 'width': 1, 'color': '#faa43a'}
                 })
 
+        #BPD
         chart.add_series({
                 'name':       [ "Visualization", 0, 4],
                 'categories': [ "Visualization", 1, 1, row, 1],
                 'values':     [ "Visualization", 1, 4, row, 4],
-                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': 'blue'}, 'border': {'color': 'black'} },
-                'line':       { 'width': 1, 'color': 'blue'}
+                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#60bd68'}, 'border': {'color': 'black'} },
+                'line':       { 'width': 1, 'color': '#60bd68'}
                 })
                 
+        #RR
         chart.add_series({
                 'name':       [ "Visualization", 0, 5],
                 'categories': [ "Visualization", 1, 1, row, 1],
                 'values':     [ "Visualization", 1, 5, row, 5],
-                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': 'orange'}, 'border': {'color': 'black'} },
-                'line':       { 'width': 1, 'color': 'orange'}
+                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#5da5da'}, 'border': {'color': 'black'} },
+                'line':       { 'width': 1, 'color': '#5da5da'}
                 })
 
+        #O2
         chart.add_series({
                 'name':       [ "Visualization", 0, 6],
                 'categories': [ "Visualization", 1, 1, row, 1],
                 'values':     [ "Visualization", 1, 6, row, 6],
-                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': 'purple'}, 'border': {'color': 'black'} },
-                'line':       { 'width': 1, 'color': 'purple'}
+                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#b276b2'}, 'border': {'color': 'black'} },
+                'line':       { 'width': 1, 'color': '#b276b2'}
                 })
 
+        #TP
         chart.add_series({
                 'name':       [ "Visualization", 0, 7],
                 'categories': [ "Visualization", 1, 1, row, 1],
                 'values':     [ "Visualization", 1, 7, row, 7],
-                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': 'yellow'}, 'border': {'color': 'black'} },
-                'line':       { 'width': 1, 'color': 'yellow'}
+                'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#868686'}, 'border': {'color': 'black'} },
+                'line':       { 'width': 1, 'color': '#868686'}
                 })
+
+        #HR_alarm
+        chart.add_series({
+                'name':       [ "Visualization", 0, 8],
+                'categories': [ "Visualization", 1, 1, row, 1],
+                'values':     [ "Visualization", 1, 8, row, 8],
+                'marker':     { 'type': 'diamond', 'size': 8, 'fill': {'color': 'red'}, 'border': {'color': 'black'} },
+                'line':       { 'none': 1 },
+                'data_labels':{ 'value': 1, 'position': 'top', 'font': {'size' : 11, 'bold': 1, 'color': 'red'}}
+                })
+
+        #BP_alarm
+        chart.add_series({
+                'name':       [ "Visualization", 0, 9],
+                'categories': [ "Visualization", 1, 1, row, 1],
+                'values':     [ "Visualization", 1, 9, row, 9],
+                'marker':     { 'type': 'diamond', 'size': 8, 'fill': {'color': 'red'}, 'border': {'color': 'black'} },
+                'line':       { 'none': 1 },
+                'data_labels':{ 'value': 1, 'position': 'top', 'font': {'size' : 11, 'bold': 1, 'color': 'red'}}
+                })
+
+        #RR_alarm
+        chart.add_series({
+                'name':       [ "Visualization", 0, 10],
+                'categories': [ "Visualization", 1, 1, row, 1],
+                'values':     [ "Visualization", 1, 10, row, 10],
+                'marker':     { 'type': 'diamond', 'size': 8, 'fill': {'color': 'red'}, 'border': {'color': 'black'} },
+                'line':       { 'none': 1 },
+                'data_labels':{ 'value': 1, 'position': 'top', 'font': {'size' : 11, 'bold': 1, 'color': 'red'}}
+        })
                 
-        chart.set_title({"name": '4 Vitals Visualization'})
+        chart.set_title({"name": '5 Vitals Visualization'})
         chart.set_x_axis({'text_axis': True, 'name': 'Date'})
         chart.set_legend({"none": 1})
         chart.show_blanks_as('span')
 
         #Add Medications & GCS
+        workbook = writer.book
         worksheet = workbook.add_worksheet('Report')
         writer.sheets['Report'] = worksheet
         header = "Code Status"
@@ -173,29 +273,8 @@ for line in txtlines:
         worksheet.write_string(29, 0, header)
         worksheet.write_string(29, 1, "Full Code")
 
-        try:                                
-                chart1 = GCS_Vitals2.set_index('CHARTTIME').T
-                chart1.to_excel(writer, sheet_name ='Report', startrow = 30 , startcol = 0)
-
-                n = 3
-                lister = af["GSN"].value_counts().nlargest(3).index.tolist()
-
-                sodium = af[(af['GSN'] == lister[0]) & (af['GSN'].notnull())]
-                sodiums = sodium[["DRUG", "DOSE_VAL_RX"]].sort_values(by="DRUG")
-                chart4 = sodiums.set_index('DRUG').T
-                chart4.to_excel(writer, sheet_name ='Report',startrow = 35 , startcol = 0)
-
-                fur = af[(af['GSN'] == lister[1]) & (af['GSN'].notnull())]
-                furs = fur[["DRUG", "DOSE_VAL_RX"]].sort_values(by="DRUG")
-                chart5 = furs.set_index('DRUG').T
-                chart5.to_excel(writer, sheet_name ='Report',startrow = 38, startcol = 0)
-
-                pro = af[(af['GSN'] == lister[2]) & (af['GSN'].notnull())]
-                pros = pro[["DRUG", "DOSE_VAL_RX"]].sort_values(by="DRUG")
-                chart6 = pros.set_index('DRUG').T
-                chart6.to_excel(writer, sheet_name ='Report',startrow = 41, startcol = 0)
-        except:
-                continue
+        chart1 = GCS_Vitals5.set_index('CHARTDATE').T
+        chart1.to_excel(writer, sheet_name ='Report', startrow = 30 , startcol = 0)
         
         #Setup
         writer.save()
