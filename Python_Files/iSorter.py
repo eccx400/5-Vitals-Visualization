@@ -14,9 +14,9 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 __author__ = "Eric Cheng"
 
-f = open(r"C:\Users\datiphy\Documents\NEO Excel\Charts\subjects.txt", "r")
+f = open(r"C:\Users\datiphy\Documents\NEO Excel\Charts\460519.txt", "r")
 
-newpath = "C:\\Users\\datiphy\\Documents\\NEO Excel\\icd_files\\"
+newpath = "C:\\Users\\datiphy\\Documents\\NEO Excel\\460_519\\"
 txtlines = f.readlines()
 for line in txtlines:
         subject_id = line.strip()
@@ -123,34 +123,15 @@ for line in txtlines:
         #GCS_Total
         GCS_Totals = gcs_vitals(198, 'GCS: Total')
 
+        #Prescriptions
+        lister = af["DRUG"].unique().tolist()
+        pres = dict(tuple(af.groupby("DRUG")))
+        prescriptions = pd.DataFrame(columns=['CHARTTIME']) 
+
         try:
-                #Gets the top 3 most common prescriptions
-                n = 3
-                lister = af["GSN"].value_counts().nlargest(3).index.tolist()
-
-                sodium = af[(af['GSN'] == lister[0]) & (af['GSN'].notnull())]
-                sodiums = sodium[["STARTDATE", "DOSE_VAL_RX", "FORM_UNIT_DISP"]].sort_values(by="STARTDATE")
-                s_header = sodium["DRUG"].values[0]
-                sodiums["DOSE_VAL_RX"] = sodiums["DOSE_VAL_RX"] +" "+ sodiums["FORM_UNIT_DISP"]
-                sodiums.STARTDATE = pd.to_datetime(sodiums.STARTDATE)
-                sodiums = sodiums.drop(columns=["FORM_UNIT_DISP"])
-                sodiums.rename(columns= {'STARTDATE': 'CHARTTIME', 'DOSE_VAL_RX' : s_header}, inplace=True)
-
-                fur = af[(af['GSN'] == lister[1]) & (af['GSN'].notnull())]
-                furs = fur[["STARTDATE", "DOSE_VAL_RX", "FORM_UNIT_DISP"]].sort_values(by="STARTDATE")
-                f_header = fur["DRUG"].values[0]
-                furs["DOSE_VAL_RX"] = furs["DOSE_VAL_RX"] +" "+ furs["FORM_UNIT_DISP"]
-                furs.STARTDATE = pd.to_datetime(furs.STARTDATE)
-                furs = furs.drop(columns=["FORM_UNIT_DISP"])
-                furs.rename(columns= {'STARTDATE': 'CHARTTIME', 'DOSE_VAL_RX' : f_header}, inplace=True)
-
-                pro = af[(af['GSN'] == lister[2]) & (af['GSN'].notnull())]
-                pros = pro[["STARTDATE", "DOSE_VAL_RX", "FORM_UNIT_DISP"]].sort_values(by="STARTDATE")
-                p_header = pro["DRUG"].values[0]
-                pros["DOSE_VAL_RX"] = pros["DOSE_VAL_RX"] +" "+ pros["FORM_UNIT_DISP"]
-                pros.STARTDATE = pd.to_datetime(pros.STARTDATE)
-                pros = pros.drop(columns=["FORM_UNIT_DISP"])
-                pros.rename(columns= {'STARTDATE': 'CHARTTIME', 'DOSE_VAL_RX' : p_header}, inplace=True)
+                for i in lister:
+                        x = get_prescriptions(i)
+                        prescriptions = pd.merge(prescriptions, x, on='CHARTTIME', how='outer') 
         except:
                 continue
 
@@ -167,15 +148,13 @@ for line in txtlines:
 
         GCS_Vitals = pd.merge(GCS_Verbals, GCS_Motors, how='outer', on=['CHARTTIME'])
         GCS_Vitals2 = pd.merge(GCS_Vitals, GCS_Totals, how='outer', on=['CHARTTIME'])
-        GCS_Vitals3 = pd.merge(GCS_Vitals2, sodiums, how='outer', on=['CHARTTIME'])
-        GCS_Vitals4 = pd.merge(GCS_Vitals3, furs, how='outer', on=['CHARTTIME'])
-        GCS_Vitals5 = pd.merge(GCS_Vitals4, pros, how='outer', on=['CHARTTIME'])
-        GCS_Vitals5 = GCS_Vitals5.sort_values(by="CHARTTIME")
-        GCS_Vitals5['CHARTDATE'] = GCS_Vitals5['CHARTTIME']
-        GCS_Vitals5.CHARTDATE = pd.to_datetime(GCS_Vitals5.CHARTTIME).dt.strftime('%m-%d')
-        GCS_Vitals5.CHARTTIME = pd.to_datetime(GCS_Vitals5.CHARTTIME).dt.strftime('%H:%M')
+        GCS_Vitals3 = pd.merge(GCS_Vitals2, prescriptions, how= 'outer', on=['CHARTTIME'])
+        GCS_Vitals3 = GCS_Vitals3.sort_values(by="CHARTTIME")
+        GCS_Vitals3['CHARTDATE'] = GCS_Vitals3['CHARTTIME']
+        GCS_Vitals3.CHARTDATE = pd.to_datetime(GCS_Vitals3.CHARTTIME).dt.strftime('%m-%d')
+        GCS_Vitals3.CHARTTIME = pd.to_datetime(GCS_Vitals3.CHARTTIME).dt.strftime('%H:%M')
         cols_to_move = ['CHARTDATE', 'CHARTTIME', 'GCS: Verbal', 'GCS: Motor', 'GCS: Total']
-        GCS_Vitals5 =  GCS_Vitals5[ cols_to_move + [ col for col in  GCS_Vitals5.columns if col not in cols_to_move ] ]
+        GCS_Vitals3 =  GCS_Vitals3[ cols_to_move + [ col for col in  GCS_Vitals3.columns if col not in cols_to_move ] ]
 
         # Create a chart object.
         chart = workbook.add_chart({"type": "line"})
@@ -284,7 +263,7 @@ for line in txtlines:
         worksheet.write_string(29, 0, header)
         worksheet.write_string(29, 1, "Full Code")
 
-        chart1 = GCS_Vitals5.set_index('CHARTDATE').T
+        chart1 = GCS_Vitals3.set_index('CHARTDATE').T
         chart1.to_excel(writer, sheet_name ='Report', startrow = 30 , startcol = 0)
         
         #Setup
@@ -294,7 +273,7 @@ for line in txtlines:
 path1 = 'C:\\Users\\datiphy\\Documents\\NEO Excel\\Charts\\ADDSv3.xlsm'
 xl = Dispatch("Excel.Application")
 wb1 = xl.Workbooks.Open(path1)
-for filename in glob.glob('C:\\Users\\datiphy\\Documents\\NEO Excel\\icd_files\\*.xlsx'):
+for filename in glob.glob('C:\\Users\\datiphy\\Documents\\NEO Excel\\460_519\\*.xlsx'):
         print(filename)
         try:
                 wb2 = xl.Workbooks.Open(filename)
