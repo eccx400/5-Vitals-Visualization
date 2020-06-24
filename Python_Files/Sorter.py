@@ -119,11 +119,12 @@ GCS_Totals = gcs_vitals(198, 'GCS: Total')
 
 #Prescriptions
 lister = af["DRUG"].unique().tolist()
-print(lister)
 pres = dict(tuple(af.groupby("DRUG")))
+prescriptions = pd.DataFrame(columns=['CHARTTIME']) 
 
 for i in lister:
-        print(get_prescriptions(i))
+        x = get_prescriptions(i)
+        prescriptions = pd.merge(prescriptions, x, on='CHARTTIME', how='outer') 
 
 #Complete Vitals Chart
 total_Vitals = pd.merge(HRS, BPSS, how='left', on=['CHARTTIME'])
@@ -138,6 +139,14 @@ total_Vitals8.to_excel( writer, sheet_name='Visualization')
 
 GCS_Vitals = pd.merge(GCS_Verbals, GCS_Motors, how='outer', on=['CHARTTIME'])
 GCS_Vitals2 = pd.merge(GCS_Vitals, GCS_Totals, how='outer', on=['CHARTTIME'])
+GCS_Vitals3 = pd.merge(GCS_Vitals2, prescriptions, how= 'outer', on=['CHARTTIME'])
+GCS_Vitals3 = GCS_Vitals3.sort_values(by="CHARTTIME")
+GCS_Vitals3['CHARTDATE'] = GCS_Vitals3['CHARTTIME']
+GCS_Vitals3.CHARTDATE = pd.to_datetime(GCS_Vitals3.CHARTTIME).dt.strftime('%m-%d')
+GCS_Vitals3.CHARTTIME = pd.to_datetime(GCS_Vitals3.CHARTTIME).dt.strftime('%H:%M')
+cols_to_move = ['CHARTDATE', 'CHARTTIME', 'GCS: Verbal', 'GCS: Motor', 'GCS: Total']
+GCS_Vitals3 =  GCS_Vitals3[ cols_to_move + [ col for col in  GCS_Vitals3.columns if col not in cols_to_move ] ]
+
 
 # Create a chart object.
 chart = workbook.add_chart({"type": "line"})
@@ -246,14 +255,13 @@ worksheet.insert_chart('A1', chart, {'x_scale': 7.777, 'y_scale': 1.944})
 worksheet.write_string(29, 0, header)
 worksheet.write_string(29, 1, "Full Code")
 
-#chart1 = GCS_Vitals2.set_index('CHARTDATE').T
-#chart1.to_excel(writer, sheet_name ='Report', startrow = 30 , startcol = 0)
+chart1 = GCS_Vitals3.set_index('CHARTDATE').T
+chart1.to_excel(writer, sheet_name ='Report', startrow = 30 , startcol = 0)
 
 #Setup
 writer.save()
 workbook.close
 
-'''
 path1 = 'C:\\Users\\datiphy\\Documents\\NEO Excel\\Charts\\ADDSv3.xlsm'
 xl = Dispatch("Excel.Application")
 wb1 = xl.Workbooks.Open(path1)
@@ -268,4 +276,3 @@ for filename in glob.glob('C:\\Users\\datiphy\\Documents\\NEO Excel\\32139_R\\76
         except:
                 print
 xl.Quit()
-'''
