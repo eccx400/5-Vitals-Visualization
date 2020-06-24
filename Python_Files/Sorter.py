@@ -147,7 +147,6 @@ GCS_Vitals3.CHARTTIME = pd.to_datetime(GCS_Vitals3.CHARTTIME).dt.strftime('%H:%M
 cols_to_move = ['CHARTDATE', 'CHARTTIME', 'GCS: Verbal', 'GCS: Motor', 'GCS: Total']
 GCS_Vitals3 =  GCS_Vitals3[ cols_to_move + [ col for col in  GCS_Vitals3.columns if col not in cols_to_move ] ]
 
-
 # Create a chart object.
 chart = workbook.add_chart({"type": "line"})
 
