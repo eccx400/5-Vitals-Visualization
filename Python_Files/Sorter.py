@@ -61,6 +61,17 @@ def gcs_vitals(item_1, vital_name):
         dataframes.rename(columns= {'VALUE' : vital_name}, inplace=True)
         return dataframes
 
+#Gets prescription columns
+def get_prescriptions(pres_name):
+        prescription = pres[pres_name]
+        p_header = prescription["DRUG"].values[0]
+        prescriptions = prescription[["STARTDATE", "DOSE_VAL_RX", "FORM_UNIT_DISP"]].sort_values(by="STARTDATE")
+        prescriptions["DOSE_VAL_RX"] = prescriptions["DOSE_VAL_RX"] +" "+ prescriptions["FORM_UNIT_DISP"]
+        prescriptions.STARTDATE = pd.to_datetime(prescriptions.STARTDATE)
+        prescriptions = prescriptions.drop(columns=["FORM_UNIT_DISP"])
+        prescriptions.rename(columns= {'STARTDATE': 'CHARTTIME', 'DOSE_VAL_RX' : p_header}, inplace=True)
+        return prescriptions
+
 #Heart Rate
 HRS = vitals(220045, 211, 'Heart Rate')
 
@@ -105,6 +116,14 @@ GCS_Motors = gcs_vitals(223901, 'GCS: Motor')
 
 #GCS_Total
 GCS_Totals = gcs_vitals(198, 'GCS: Total')
+
+#Prescriptions
+lister = af["DRUG"].unique().tolist()
+print(lister)
+pres = dict(tuple(af.groupby("DRUG")))
+
+for i in lister:
+        print(get_prescriptions(i))
 
 #Complete Vitals Chart
 total_Vitals = pd.merge(HRS, BPSS, how='left', on=['CHARTTIME'])

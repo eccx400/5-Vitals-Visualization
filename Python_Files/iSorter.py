@@ -67,6 +67,17 @@ for line in txtlines:
                 dataframes.rename(columns= {'VALUE' : vital_name}, inplace=True)
                 return dataframes
 
+        #Gets prescription columns
+        def get_prescriptions(pres_name):
+                prescription = pres[pres_name]
+                p_header = prescription["DRUG"].values[0]
+                prescriptions = prescription[["STARTDATE", "DOSE_VAL_RX", "FORM_UNIT_DISP"]].sort_values(by="STARTDATE")
+                prescriptions["DOSE_VAL_RX"] = prescriptions["DOSE_VAL_RX"] +" "+ prescriptions["FORM_UNIT_DISP"]
+                prescriptions.STARTDATE = pd.to_datetime(prescriptions.STARTDATE)
+                prescriptions = prescriptions.drop(columns=["FORM_UNIT_DISP"])
+                prescriptions.rename(columns= {'STARTDATE': 'CHARTTIME', 'DOSE_VAL_RX' : p_header}, inplace=True)
+                return prescriptions
+
         #Heart Rate
         HRS = vitals(220045, 211, 'Heart Rate')
 
