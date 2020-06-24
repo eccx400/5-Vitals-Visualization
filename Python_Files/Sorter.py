@@ -22,7 +22,7 @@ df = pd.read_csv (r'C:\Users\datiphy\Documents\NEO Excel\46520\subject_16081_Cha
 af = pd.read_csv(r'C:\Users\datiphy\Documents\NEO Excel\46520_P\subject_16081_prescriptions.csv', sep= '\t',
                     names= ['Prescription_ID', 'ROW_ID', 'SUBJECT_ID', 'HADM_ID', 'ICUSTAY_ID', 'STARTDATE', 'ENDDATE', 'DRUG_TYPE', 'DRUG', 'DRUG_NAME_POE', 'DRUG_NAME_GENERIC', 'FORMULARY_DRUG_CD', 'GSN', 'NDC', 'PROD_STRENGTH', 'DOSE_VAL_RX', 'DOSE_UNIT_RX', 'FORM_VAL_DISP', 'FORM_UNIT_DISP', 'ROUTE'])
 
-out_path = "C:/Users/datiphy/Documents/NEO Excel/32139_R/16081_Report.xlsx"
+out_path = "C:/Users/datiphy/Documents/NEO Excel/Reports/16081_Report.xlsx"
 writer = pd.ExcelWriter(out_path, engine='xlsxwriter')
 
 workbook = writer.book

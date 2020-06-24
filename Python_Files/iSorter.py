@@ -14,9 +14,9 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 __author__ = "Eric Cheng"
 
-f = open(r"C:\Users\datiphy\Documents\NEO Excel\Charts\subjects.txt", "r")
+f = open(r"C:\Users\datiphy\Documents\NEO Excel\Charts\460519.txt", "r")
 
-newpath = "C:\\Users\\datiphy\\Documents\\NEO Excel\\icd_files\\"
+newpath = "C:\\Users\\datiphy\\Documents\\NEO Excel\\460_519\\"
 txtlines = f.readlines()
 for line in txtlines:
         subject_id = line.strip()
@@ -273,7 +273,7 @@ for line in txtlines:
 path1 = 'C:\\Users\\datiphy\\Documents\\NEO Excel\\Charts\\ADDSv3.xlsm'
 xl = Dispatch("Excel.Application")
 wb1 = xl.Workbooks.Open(path1)
-for filename in glob.glob('C:\\Users\\datiphy\\Documents\\NEO Excel\\icd_files\\*.xlsx'):
+for filename in glob.glob('C:\\Users\\datiphy\\Documents\\NEO Excel\\460_519\\*.xlsx'):
         print(filename)
         try:
                 wb2 = xl.Workbooks.Open(filename)
