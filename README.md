@@ -55,6 +55,7 @@ ICD9 disease values:
 - 490-496  Chronic Obstructive Pulmonary Disease And Allied Conditions
 - 500-508  Pneumoconioses And Other Lung Diseases Due To External Agents
 - 510-519  Other Diseases Of Respiratory System
+- E8859    Fall from other slipping, falling, tripping
 
 ## Technologies
 * Python 2.7 or 3.6
