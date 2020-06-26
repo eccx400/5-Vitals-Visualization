@@ -18,9 +18,11 @@ ICD disease values:
 - 510-519  Other Diseases Of Respiratory System
 
 ## Technologies
-* Tech 1 - version 1.0
-* Tech 2 - version 2.0
-* Tech 3 - version 3.0
+* Python 2.7 or 3.6
 
 ## Status
-Project is: _in progress_, _finished_, _no longer continue_ and why?
+Project is: _in progress_
+
+Currently working on testing and making sure that all batch reports have correct data and
+that the charts and prescription tables are printed correctly. Formatting issues are also 
+being resolved. 
