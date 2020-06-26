@@ -41,7 +41,7 @@ for line in txtlines:
         #Calculates 5 Vitals
         def vitals(item_1, item_2, vital_name):
                 dataframe = df[(df['ITEMID'] == item_1) | (df['ITEMID'] == item_2)]
-                dataframe['CHARTTIME'] = pd.to_datetime(dataframe['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
+                dataframe['CHARTTIME'] = pd.to_datetime(dataframe['CHARTTIME'])
                 dataframes = dataframe[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
                 dataframes.rename(columns= {'VALUENUM' : vital_name}, inplace=True)   
                 return dataframes
@@ -110,7 +110,7 @@ for line in txtlines:
         TPC = df[(df['ITEMID'] == 223762) | (df['ITEMID'] == 676 )]
         TPC['ITEMID'] = TPC['ITEMID'].apply(f)
         TP = pd.concat([TPF, TPC])
-        TP['CHARTTIME'] = pd.to_datetime(TP['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
+        TP['CHARTTIME'] = pd.to_datetime(TP['CHARTTIME'])
         TPS = TP[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
         TPS.rename(columns= {'VALUENUM' : 'Temperature'}, inplace=True)
 
@@ -135,26 +135,31 @@ for line in txtlines:
         except:
                 continue
 
-        #Complete Vitals Chart
-        total_Vitals = pd.merge(HRS, BPSS, how='left', on=['CHARTTIME'])
-        total_Vitals2 = pd.merge(total_Vitals, BPDS, how='left', on=['CHARTTIME'])
-        total_Vitals3 = pd.merge(total_Vitals2, RRS, how='left', on=['CHARTTIME'])
-        total_Vitals4 = pd.merge(total_Vitals3, O2S, how='left', on=['CHARTTIME'])
-        total_Vitals5 = pd.merge(total_Vitals4, TPS, how='left', on=['CHARTTIME'])
-        total_Vitals6 = pd.merge(total_Vitals5, HR_alarm, how='left', on=['CHARTTIME'])
-        total_Vitals7 = pd.merge(total_Vitals6, BPS_alarm, how='left', on=['CHARTTIME'])
-        total_Vitals8 = pd.merge(total_Vitals7, RR_alarm, how='left', on=['CHARTTIME'])
-        total_Vitals8.to_excel( writer, sheet_name='Visualization')
+        try:
+                #Complete Vitals Chart
+                total_Vitals = pd.merge(HRS, BPSS, how='left', on=['CHARTTIME'])
+                total_Vitals2 = pd.merge(total_Vitals, BPDS, how='left', on=['CHARTTIME'])
+                total_Vitals3 = pd.merge(total_Vitals2, RRS, how='left', on=['CHARTTIME'])
+                total_Vitals4 = pd.merge(total_Vitals3, O2S, how='left', on=['CHARTTIME'])
+                total_Vitals5 = pd.merge(total_Vitals4, TPS, how='left', on=['CHARTTIME'])
+                total_Vitals6 = pd.merge(total_Vitals5, HR_alarm, how='left', on=['CHARTTIME'])
+                total_Vitals7 = pd.merge(total_Vitals6, BPS_alarm, how='left', on=['CHARTTIME'])
+                total_Vitals8 = pd.merge(total_Vitals7, RR_alarm, how='left', on=['CHARTTIME'])
+                total_Vitals8 = total_Vitals8.sort_values(by="CHARTTIME")        
+                total_Vitals8.CHARTTIME = pd.to_datetime(total_Vitals8.CHARTTIME).dt.strftime('%m-%d, %H:%M')
+                total_Vitals8.to_excel( writer, sheet_name='Visualization')
 
-        GCS_Vitals = pd.merge(GCS_Verbals, GCS_Motors, how='outer', on=['CHARTTIME'])
-        GCS_Vitals2 = pd.merge(GCS_Vitals, GCS_Totals, how='outer', on=['CHARTTIME'])
-        GCS_Vitals3 = pd.merge(GCS_Vitals2, prescriptions, how= 'outer', on=['CHARTTIME'])
-        GCS_Vitals3 = GCS_Vitals3.sort_values(by="CHARTTIME")
-        GCS_Vitals3['CHARTDATE'] = GCS_Vitals3['CHARTTIME']
-        GCS_Vitals3.CHARTDATE = pd.to_datetime(GCS_Vitals3.CHARTTIME).dt.strftime('%m-%d')
-        GCS_Vitals3.CHARTTIME = pd.to_datetime(GCS_Vitals3.CHARTTIME).dt.strftime('%H:%M')
-        cols_to_move = ['CHARTDATE', 'CHARTTIME', 'GCS: Verbal', 'GCS: Motor', 'GCS: Total']
-        GCS_Vitals3 =  GCS_Vitals3[ cols_to_move + [ col for col in  GCS_Vitals3.columns if col not in cols_to_move ] ]
+                GCS_Vitals = pd.merge(GCS_Verbals, GCS_Motors, how='outer', on=['CHARTTIME'])
+                GCS_Vitals2 = pd.merge(GCS_Vitals, GCS_Totals, how='outer', on=['CHARTTIME'])
+                GCS_Vitals3 = pd.merge(GCS_Vitals2, prescriptions, how= 'outer', on=['CHARTTIME'])
+                GCS_Vitals3 = GCS_Vitals3.sort_values(by="CHARTTIME")
+                GCS_Vitals3['CHARTDATE'] = GCS_Vitals3['CHARTTIME']
+                GCS_Vitals3.CHARTDATE = pd.to_datetime(GCS_Vitals3.CHARTTIME).dt.strftime('%m-%d')
+                GCS_Vitals3.CHARTTIME = pd.to_datetime(GCS_Vitals3.CHARTTIME).dt.strftime('%H:%M')
+                cols_to_move = ['CHARTDATE', 'CHARTTIME', 'GCS: Verbal', 'GCS: Motor', 'GCS: Total']
+                GCS_Vitals3 =  GCS_Vitals3[ cols_to_move + [ col for col in  GCS_Vitals3.columns if col not in cols_to_move ]]
+        except:
+                continue
 
         # Create a chart object.
         chart = workbook.add_chart({"type": "line"})
@@ -248,7 +253,7 @@ for line in txtlines:
         })
                 
         chart.set_title({"name": '5 Vitals Visualization'})
-        chart.set_x_axis({'text_axis': True, 'name': 'Date'})
+        chart.set_x_axis({'text_axis': True, 'name': 'Date', 'num_font':  {'rotation': -22}})
         chart.set_legend({"none": 1})
         chart.show_blanks_as('span')
 

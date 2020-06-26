@@ -16,13 +16,13 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 __author__ = "Eric Cheng"
 
-df = pd.read_csv (r'C:\Users\datiphy\Documents\NEO Excel\46520\subject_16081_ChartEvents.txt', sep= '\t', index_col= False,
+df = pd.read_csv (r'C:\Users\datiphy\Documents\NEO Excel\46520\subject_25664_ChartEvents.txt', sep= '\t', index_col= False,
                     names= ['ROW_ID', 'SUBJECT_ID', 'HADM_ID', 'ICUSTAY_ID', 'ITEMID', 'CHARTTIME', 'STORETIME', 'CGID', 'VALUE', 'VALUENUM', 'VALUEUOM', 'WARNING', 'ERROR', 'RESULTSTATUS'])
 
-af = pd.read_csv(r'C:\Users\datiphy\Documents\NEO Excel\46520_P\subject_16081_prescriptions.csv', sep= '\t',
+af = pd.read_csv(r'C:\Users\datiphy\Documents\NEO Excel\46520_P\subject_25664_prescriptions.csv', sep= '\t',
                     names= ['Prescription_ID', 'ROW_ID', 'SUBJECT_ID', 'HADM_ID', 'ICUSTAY_ID', 'STARTDATE', 'ENDDATE', 'DRUG_TYPE', 'DRUG', 'DRUG_NAME_POE', 'DRUG_NAME_GENERIC', 'FORMULARY_DRUG_CD', 'GSN', 'NDC', 'PROD_STRENGTH', 'DOSE_VAL_RX', 'DOSE_UNIT_RX', 'FORM_VAL_DISP', 'FORM_UNIT_DISP', 'ROUTE'])
 
-out_path = "C:/Users/datiphy/Documents/NEO Excel/Reports/16081_Report.xlsx"
+out_path = "C:/Users/datiphy/Documents/NEO Excel/Reports/25664_Report.xlsx"
 writer = pd.ExcelWriter(out_path, engine='xlsxwriter')
 
 workbook = writer.book
@@ -35,7 +35,7 @@ def f(x):
 #Calculates 5 Vitals
 def vitals(item_1, item_2, vital_name):
         dataframe = df[(df['ITEMID'] == item_1) | (df['ITEMID'] == item_2)]
-        dataframe['CHARTTIME'] = pd.to_datetime(dataframe['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
+        dataframe['CHARTTIME'] = pd.to_datetime(dataframe['CHARTTIME'])
         dataframes = dataframe[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
         dataframes.rename(columns= {'VALUENUM' : vital_name}, inplace=True)   
         return dataframes
@@ -104,7 +104,7 @@ TPF = df[(df['ITEMID'] == 223761) | (df['ITEMID'] == 678 )]
 TPC = df[(df['ITEMID'] == 223762) | (df['ITEMID'] == 676 )]
 TPC['ITEMID'] = TPC['ITEMID'].apply(f)
 TP = pd.concat([TPF, TPC])
-TP['CHARTTIME'] = pd.to_datetime(TP['CHARTTIME']).dt.strftime('%m-%d, %H:%M')
+TP['CHARTTIME'] = pd.to_datetime(TP['CHARTTIME'])
 TPS = TP[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
 TPS.rename(columns= {'VALUENUM' : 'Temperature'}, inplace=True)
 
@@ -135,6 +135,8 @@ total_Vitals5 = pd.merge(total_Vitals4, TPS, how='left', on=['CHARTTIME'])
 total_Vitals6 = pd.merge(total_Vitals5, HR_alarm, how='left', on=['CHARTTIME'])
 total_Vitals7 = pd.merge(total_Vitals6, BPS_alarm, how='left', on=['CHARTTIME'])
 total_Vitals8 = pd.merge(total_Vitals7, RR_alarm, how='left', on=['CHARTTIME'])
+total_Vitals8 = total_Vitals8.sort_values(by="CHARTTIME")    
+total_Vitals8.CHARTTIME = pd.to_datetime(total_Vitals8.CHARTTIME).dt.strftime('%m-%d, %H:%M')
 total_Vitals8.to_excel( writer, sheet_name='Visualization')
 
 GCS_Vitals = pd.merge(GCS_Verbals, GCS_Motors, how='outer', on=['CHARTTIME'])
@@ -239,8 +241,8 @@ chart.add_series({
         })
 
 chart.set_title({"name": '5 Vitals Visualization'})
-chart.set_x_axis({'text_axis': True, 'name': 'Date'})
-#.set_legend({"none": 1})
+chart.set_x_axis({'text_axis': True, 'name': 'Date', 'num_font':  {'rotation': -22}})
+chart.set_legend({"none": 1})
 chart.show_blanks_as('span')
 
 #Add Medications & GCS
@@ -264,7 +266,7 @@ workbook.close
 path1 = 'C:\\Users\\datiphy\\Documents\\NEO Excel\\Charts\\ADDSv3.xlsm'
 xl = Dispatch("Excel.Application")
 wb1 = xl.Workbooks.Open(path1)
-for filename in glob.glob('C:\\Users\\datiphy\\Documents\\NEO Excel\\32139_R\\76386_Report.xlsx'):
+for filename in glob.glob('C:\\Users\\datiphy\\Documents\\NEO Excel\\32139_R\\25664_Report.xlsx'):
         print(filename)
         try:
                 wb2 = xl.Workbooks.Open(filename)
