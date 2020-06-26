@@ -28,7 +28,7 @@ writer = pd.ExcelWriter(out_path, engine='xlsxwriter')
 workbook = writer.book
 
 #Converts Celcius to Fahrenheit
-def f(x):
+def tempConv(x):
         x = x * 1.8 + 32
         return float(x)
 
@@ -102,7 +102,7 @@ O2S = vitals(220277, 646, 'O2 Saturation')
 #Temperature
 TPF = df[(df['ITEMID'] == 223761) | (df['ITEMID'] == 678 )]
 TPC = df[(df['ITEMID'] == 223762) | (df['ITEMID'] == 676 )]
-TPC['ITEMID'] = TPC['ITEMID'].apply(f)
+TPC['ITEMID'] = TPC['ITEMID'].apply(tempConv)
 TP = pd.concat([TPF, TPC])
 TP['CHARTTIME'] = pd.to_datetime(TP['CHARTTIME'])
 TPS = TP[["CHARTTIME", "VALUENUM"]].sort_values(by="CHARTTIME")
