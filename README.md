@@ -7,9 +7,42 @@
 * [Status](#status)
 
 ## General info
-Add more general information about project. What the purpose of the project is? Motivation?
+This program uses pandas and xlsxwriter in order to parse excel files in .xlsx
+and csv and renders report of patient 5 vitals, GCS, and prescription information.
+The files can be read individually or in batches based on subject data; the Sorter.py
+file runs the patient data individually, while the iSorter.py file runs the patient
+data in batches based on the file name provided. 
 
-ICD disease values:
+There are a total of 46520 patient ChartEvents files provided along with matching
+prescription files that give information on the route and type of prescription
+the subject is taking. All subjects have a registered subject_id. 
+
+The project requires us to separate the patients batches by the 5 vitals: Heart Rate,
+Blood Pressure, Temperature, Respiratory Rate, and O2 Saturation. The item ids that
+are used to parse these data are listed below.
+
+HEART RATE
+- 220045, 211
+
+BLOOD PRESSURE
+- 220179, 455 -- "Systolic Blood Pressure"
+- 220180, 8441 -- "Diastolic Blood Pressure"
+
+TEMPERATURE
+- 223762, 676 -- "Temperature Celsius"
+- 223761, 678 -- "Temperature Fahrenheit"
+
+RESPIRATORY RATE
+- 220210, 618
+
+O2 Saturation
+- 220277, 646
+
+The data are then sorted to form a dataframe with each of the vital's itemid and their 
+corresponding chart time, and then merged into the visualization table which will be 
+printed to the 'Visualization' sheet on the report. 
+
+ICD9 disease values:
 - 460-466  Acute Respiratory Infections
 - 470-478  Other Diseases Of Upper Respiratory Tract
 - 480-488  Pneumonia And Influenza
