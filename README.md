@@ -66,4 +66,5 @@ Project is: _in progress_
 Currently working on testing and making sure that all batch reports have correct data and
 that the charts and prescription tables are printed correctly. Formatting issues are also 
 being resolved. The further implementation of the ADDS chart and categorization programs
-is still continuing.
+is still continuing. Possible implementation of a dashboard or analysis algorithm is in 
+consideration.
