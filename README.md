@@ -55,7 +55,7 @@ ICD9 disease values:
 - 490-496  Chronic Obstructive Pulmonary Disease And Allied Conditions
 - 500-508  Pneumoconioses And Other Lung Diseases Due To External Agents
 - 510-519  Other Diseases Of Respiratory System
-- E8859    Fall from other Slipping, Falling, Tripping
+- E8859    Accidental fall on same level from slipping tripping or stumbling
 
 ## Technologies
 * Python 2.7 or 3.6
@@ -66,4 +66,5 @@ Project is: _in progress_
 Currently working on testing and making sure that all batch reports have correct data and
 that the charts and prescription tables are printed correctly. Formatting issues are also 
 being resolved. The further implementation of the ADDS chart and categorization programs
-is still continuing.
+is still continuing. Possible implementation of a dashboard or analysis algorithm is in 
+consideration.
