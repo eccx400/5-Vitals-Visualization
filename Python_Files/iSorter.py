@@ -1,15 +1,7 @@
-import xlwt
-from xlwt import Workbook
 import xlsxwriter
 import pandas as pd
-import os
 import glob
-from pandas import ExcelWriter
-from pandas import ExcelFile
-import xlwings as xw
 from win32com.client import Dispatch
-from functools import reduce
-from StyleFrame import StyleFrame, utils
 pd.options.mode.chained_assignment = None  # default='warn'
 
 __author__ = "Eric Cheng"

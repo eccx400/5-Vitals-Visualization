@@ -1,17 +1,7 @@
-import json
-import xlwt
-import glob
-from xlwt import Workbook
 import xlsxwriter
-import matplotlib.pyplot as plt
-import win32com.client
+import pandas as pd
+import glob
 from win32com.client import Dispatch
-import pandas as pd
-import numpy as np
-import pandas as pd
-from pandas import ExcelWriter
-from pandas import ExcelFile
-from functools import reduce
 pd.options.mode.chained_assignment = None  # default='warn'
 
 __author__ = "Eric Cheng"
