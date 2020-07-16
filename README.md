@@ -5,7 +5,7 @@
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Status](#status)
-* [License](#licence)
+* [License](#license)
 
 ## General info
 This program uses pandas and xlsxwriter in order to parse excel files in .xlsx
@@ -71,7 +71,6 @@ is still continuing. Possible implementation of a dashboard or analysis algorith
 consideration.
 
 ## License
-
 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/3.0/">
     <img alt="Creative Commons License" style="border-width:0" src="https://licensebuttons.net/l/by-nc-sa/3.0/88x31.png" />
 </a>
