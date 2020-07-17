@@ -4,6 +4,7 @@
 ## Table of contents
 * [General info](#general-info)
 * [Modules](#modules)
+* [Screenshots](#screenshots)
 * [Technologies](#technologies)
 * [Status](#status)
 * [License](#license)
@@ -67,6 +68,11 @@ Sorter.py and iSorter.py.
 
 <b>Sorter.py</b> is a file for parsing an individual patient file while <b>iSorter.py</b>
 parses multiple patient files in batches.
+
+## Screenshots
+![](./Images/visTable.jpg)
+![](./Images/report.jpg)
+![](./Images/ADDS.jpg)
 
 ## Technologies
 * Python 2.7 or 3.6
