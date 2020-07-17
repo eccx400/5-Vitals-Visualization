@@ -71,7 +71,9 @@ parses multiple patient files in batches.
 
 ## Screenshots
 ![](./Images/visTable.jpg)
+
 ![](./Images/report.jpg)
+
 ![](./Images/ADDS.jpg)
 
 ## Technologies
