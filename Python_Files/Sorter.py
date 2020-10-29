@@ -253,10 +253,10 @@ chart1.to_excel(writer, sheet_name ='Report', startrow = 30 , startcol = 0)
 writer.save()
 workbook.close
 
-path1 = 'C:\\Users\\datiphy\\Documents\\NEO Excel\\Charts\\ADDSv3.xlsm'
+path1 = 'C:\\Users\\14086\\Documents\\5-Vitals-Visualization\\Charts\\ADDSv3.xlsm'
 xl = Dispatch("Excel.Application")
 wb1 = xl.Workbooks.Open(path1)
-for filename in glob.glob('C:\\Users\\datiphy\\Documents\\NEO Excel\\32139_R\\25664_Report.xlsx'):
+for filename in glob.glob('C:\\Users\\14086\\Documents\\5-Vitals-Visualization\\32139_R\\25664_Report.xlsx'):
         print(filename)
         try:
                 wb2 = xl.Workbooks.Open(filename)

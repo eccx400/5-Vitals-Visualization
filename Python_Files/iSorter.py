@@ -6,14 +6,14 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 __author__ = "Eric Cheng"
 
-f = open(r"C:\Users\datiphy\Documents\NEO Excel\Charts\460519.txt", "r")
+f = open(r"C:\Users\14086\Documents\5-Vitals-Visualization\Charts\460519.txt", "r")
 
-newpath = "C:\\Users\\datiphy\\Documents\\NEO Excel\\460_519\\"
+newpath = "C:\\Users\\14086\\Documents\\5-Vitals-Visualization\\460_519\\"
 txtlines = f.readlines()
 for line in txtlines:
         subject_id = line.strip()
-        chartfile= "C:\\Users\\datiphy\\Documents\\NEO Excel\\46520\\" + "subject_"+ subject_id + "_ChartEvents.txt"
-        prescfile = "C:\\Users\\datiphy\\Documents\\NEO Excel\\46520_P\\" + "subject_" + subject_id + "_prescriptions.csv"
+        chartfile= "C:\\Users\\14086\\Documents\\5-Vitals-Visualization\\46520\\" + "subject_"+ subject_id + "_ChartEvents.txt"
+        prescfile = "C:\\Users\\14086\\Documents\\5-Vitals-Visualization\\46520_P\\" + "subject_" + subject_id + "_prescriptions.csv"
 
         #CHART EVENTS
         df = pd.read_csv(chartfile, sep= '\t', index_col= False, names= ['ROW_ID', 'SUBJECT_ID', 'HADM_ID', 'ICUSTAY_ID', 'ITEMID', 'CHARTTIME', 'STORETIME', 'CGID', 'VALUE', 'VALUENUM', 'VALUEUOM', 'WARNING', 'ERROR', 'RESULTSTATUS']) 
@@ -268,10 +268,10 @@ for line in txtlines:
         workbook.close
 
 #For Adult Deterioration Detection System form
-path1 = 'C:\\Users\\datiphy\\Documents\\NEO Excel\\Charts\\ADDSv3.xlsm'
+path1 = 'C:\\Users\\14086\\Documents\\5-Vitals-Visualization\\Charts\\ADDSv3.xlsm'
 xl = Dispatch("Excel.Application")
 wb1 = xl.Workbooks.Open(path1)
-for filename in glob.glob('C:\\Users\\datiphy\\Documents\\NEO Excel\\460_519\\*.xlsx'):
+for filename in glob.glob('C:\\Users\\14086\\Documents\\5-Vitals-Visualization\\460_519\\*.xlsx'):
         print(filename)
         try:
                 wb2 = xl.Workbooks.Open(filename)
