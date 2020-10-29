@@ -6,13 +6,13 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 __author__ = "Eric Cheng"
 
-df = pd.read_csv (r'C:\Users\datiphy\Documents\NEO Excel\46520\subject_25664_ChartEvents.txt', sep= '\t', index_col= False,
+df = pd.read_csv (r'C:\Users\14086\Documents\5-Vitals-Visualization\46520\subject_25664_ChartEvents.txt', sep= '\t', index_col= False,
                     names= ['ROW_ID', 'SUBJECT_ID', 'HADM_ID', 'ICUSTAY_ID', 'ITEMID', 'CHARTTIME', 'STORETIME', 'CGID', 'VALUE', 'VALUENUM', 'VALUEUOM', 'WARNING', 'ERROR', 'RESULTSTATUS'])
 
-af = pd.read_csv(r'C:\Users\datiphy\Documents\NEO Excel\46520_P\subject_25664_prescriptions.csv', sep= '\t',
+af = pd.read_csv(r'C:\Users\14086\Documents\5-Vitals-Visualization\46520_P\subject_25664_prescriptions.csv', sep= '\t',
                     names= ['Prescription_ID', 'ROW_ID', 'SUBJECT_ID', 'HADM_ID', 'ICUSTAY_ID', 'STARTDATE', 'ENDDATE', 'DRUG_TYPE', 'DRUG', 'DRUG_NAME_POE', 'DRUG_NAME_GENERIC', 'FORMULARY_DRUG_CD', 'GSN', 'NDC', 'PROD_STRENGTH', 'DOSE_VAL_RX', 'DOSE_UNIT_RX', 'FORM_VAL_DISP', 'FORM_UNIT_DISP', 'ROUTE'])
 
-out_path = "C:/Users/datiphy/Documents/NEO Excel/Reports/25664_Report.xlsx"
+out_path = "C:/Users/14086/Documents/5-Vitals-Visualization/46520/Reports/25664_Report.xlsx"
 writer = pd.ExcelWriter(out_path, engine='xlsxwriter')
 
 workbook = writer.book
