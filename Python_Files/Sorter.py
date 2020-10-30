@@ -9,10 +9,10 @@ __author__ = "Eric Cheng"
 df = pd.read_csv (r'C:\Users\14086\Documents\5-Vitals-Visualization\46520\subject_25664_ChartEvents.txt', sep= '\t', index_col= False,
                     names= ['ROW_ID', 'SUBJECT_ID', 'HADM_ID', 'ICUSTAY_ID', 'ITEMID', 'CHARTTIME', 'STORETIME', 'CGID', 'VALUE', 'VALUENUM', 'VALUEUOM', 'WARNING', 'ERROR', 'RESULTSTATUS'])
 
-af = pd.read_csv(r'C:\Users\14086\Documents\5-Vitals-Visualization\46520_P\subject_25664_prescriptions.csv', sep= '\t',
+af = pd.read_csv(r'C:\Users\14086\Documents\5-Vitals-Visualization\46520_P\subject_25664_prescriptions.txt', sep= '\t',
                     names= ['Prescription_ID', 'ROW_ID', 'SUBJECT_ID', 'HADM_ID', 'ICUSTAY_ID', 'STARTDATE', 'ENDDATE', 'DRUG_TYPE', 'DRUG', 'DRUG_NAME_POE', 'DRUG_NAME_GENERIC', 'FORMULARY_DRUG_CD', 'GSN', 'NDC', 'PROD_STRENGTH', 'DOSE_VAL_RX', 'DOSE_UNIT_RX', 'FORM_VAL_DISP', 'FORM_UNIT_DISP', 'ROUTE'])
 
-out_path = "C:/Users/14086/Documents/5-Vitals-Visualization/46520/Reports/25664_Report.xlsx"
+out_path = "C:/Users/14086/Documents/5-Vitals-Visualization/Reports/25664_Report.xlsx"
 writer = pd.ExcelWriter(out_path, engine='xlsxwriter')
 
 workbook = writer.book
@@ -152,7 +152,8 @@ chart.add_series({
         'categories': [ "Visualization", 1, 1, row, 1],
         'values':     [ "Visualization", 1, 2, row, 2],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#f15854'}, 'border': {'color': 'black'} },
-        'line':       { 'width': 1, 'color': '#f15854'}
+        'line':       { 'width': 1, 'color': '#f15854'},
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'color': 'black'}}
          })
 
 #BPS
@@ -161,7 +162,8 @@ chart.add_series({
         'categories': [ "Visualization", 1, 1, row, 1],
         'values':     [ "Visualization", 1, 3, row, 3],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#faa43a'}, 'border': {'color': 'black'}},
-        'line':       { 'width': 1, 'color': '#faa43a'}
+        'line':       { 'width': 1, 'color': '#faa43a'},
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'color': 'black'}}
          })
 
 #BPD
@@ -170,7 +172,8 @@ chart.add_series({
         'categories': [ "Visualization", 1, 1, row, 1],
         'values':     [ "Visualization", 1, 4, row, 4],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#60bd68'}, 'border': {'color': 'black'} },
-        'line':       { 'width': 1, 'color': '#60bd68'}
+        'line':       { 'width': 1, 'color': '#60bd68'},
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'bold': 1, 'color': 'black'}}
          })
         
 #RR
@@ -179,7 +182,8 @@ chart.add_series({
         'categories': [ "Visualization", 1, 1, row, 1],
         'values':     [ "Visualization", 1, 5, row, 5],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#5da5da'}, 'border': {'color': 'black'} },
-        'line':       { 'width': 1, 'color': '#5da5da'}
+        'line':       { 'width': 1, 'color': '#5da5da'},
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'bold': 1, 'color': 'black'}}
          })
 
 #O2
@@ -188,7 +192,8 @@ chart.add_series({
         'categories': [ "Visualization", 1, 1, row, 1],
         'values':     [ "Visualization", 1, 6, row, 6],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#b276b2'}, 'border': {'color': 'black'} },
-        'line':       { 'width': 1, 'color': '#b276b2'}
+        'line':       { 'width': 1, 'color': '#b276b2'},
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'bold': 1, 'color': 'black'}}
          })
 
 #TP
@@ -253,6 +258,7 @@ chart1.to_excel(writer, sheet_name ='Report', startrow = 30 , startcol = 0)
 writer.save()
 workbook.close
 
+'''
 path1 = 'C:\\Users\\14086\\Documents\\5-Vitals-Visualization\\Charts\\ADDSv3.xlsm'
 xl = Dispatch("Excel.Application")
 wb1 = xl.Workbooks.Open(path1)
@@ -267,3 +273,4 @@ for filename in glob.glob('C:\\Users\\14086\\Documents\\5-Vitals-Visualization\\
         except:
                 print
 xl.Quit()
+'''
