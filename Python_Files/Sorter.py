@@ -153,7 +153,7 @@ chart.add_series({
         'values':     [ "Visualization", 1, 2, row, 2],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#f15854'}, 'border': {'color': 'black'} },
         'line':       { 'width': 1, 'color': '#f15854'},
-        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'color': 'black'}}
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'color': '#f15854'}}
          })
 
 #BPS
@@ -163,7 +163,7 @@ chart.add_series({
         'values':     [ "Visualization", 1, 3, row, 3],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#faa43a'}, 'border': {'color': 'black'}},
         'line':       { 'width': 1, 'color': '#faa43a'},
-        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'color': 'black'}}
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'color': '#faa43a'}}
          })
 
 #BPD
@@ -173,7 +173,7 @@ chart.add_series({
         'values':     [ "Visualization", 1, 4, row, 4],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#60bd68'}, 'border': {'color': 'black'} },
         'line':       { 'width': 1, 'color': '#60bd68'},
-        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'bold': 1, 'color': 'black'}}
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'color': '#60bd68'}}
          })
         
 #RR
@@ -183,7 +183,7 @@ chart.add_series({
         'values':     [ "Visualization", 1, 5, row, 5],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#5da5da'}, 'border': {'color': 'black'} },
         'line':       { 'width': 1, 'color': '#5da5da'},
-        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'bold': 1, 'color': 'black'}}
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'color': '#5da5da'}}
          })
 
 #O2
@@ -193,7 +193,7 @@ chart.add_series({
         'values':     [ "Visualization", 1, 6, row, 6],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#b276b2'}, 'border': {'color': 'black'} },
         'line':       { 'width': 1, 'color': '#b276b2'},
-        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'bold': 1, 'color': 'black'}}
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'color': '#b276b2'}}
          })
 
 #TP
@@ -202,7 +202,8 @@ chart.add_series({
         'categories': [ "Visualization", 1, 1, row, 1],
         'values':     [ "Visualization", 1, 7, row, 7],
         'marker':     { 'type': 'circle', 'size': 4, 'fill': {'color': '#868686'}, 'border': {'color': 'black'} },
-        'line':       { 'width': 1, 'color': '#868686'}
+        'line':       { 'width': 1, 'color': '#868686'},
+        'data_labels':{ 'series_name': True, 'separator': "\n", 'font': {'size' : 11, 'color': '#868686'}}
         })
 
 #HR_alarm
